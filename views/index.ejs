@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Idle Tycoon</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <header>
+    <div class="logo">💰 Idle Tycoon</div>
+    <div class="hud">
+      <div class="hud-stat">
+        <span class="hud-label">Cash</span>
+        <span id="hud-cash" class="hud-value gold">$0.00</span>
+      </div>
+      <div class="hud-stat">
+        <span class="hud-label">Per Second</span>
+        <span id="hud-ips" class="hud-value">$0/s</span>
+      </div>
+      <div class="hud-stat">
+        <span class="hud-label">Total Earned</span>
+        <span id="hud-total" class="hud-value">$0</span>
+      </div>
+    </div>
+    <div id="conn-dot" class="conn-dot disconnected" title="Server connection"></div>
+  </header>
+
+  <!-- ── Main layout ────────────────────────────────────────────── -->
+  <div class="layout">
+
+    <!-- ── Businesses ─────────────────────────────────────────── -->
+    <section class="panel panel-businesses">
+      <div class="panel-title">
+        <span>Businesses</span>
+        <div class="qty-btns">
+          <button class="qty-btn active" data-qty="1">×1</button>
+          <button class="qty-btn" data-qty="10">×10</button>
+          <button class="qty-btn" data-qty="100">×100</button>
+        </div>
+      </div>
+
+      <div id="biz-list">
+        <% businesses.forEach(function(b, idx) { %>
+        <div class="biz-card" id="biz-<%= b.id %>" data-id="<%= b.id %>">
+          <div class="biz-icon" style="background: <%= b.color %>22; border-color: <%= b.color %>44">
+            <%= b.icon %>
+          </div>
+          <div class="biz-body">
+            <div class="biz-title">
+              <span class="biz-name"><%= b.name %></span>
+              <span class="biz-owned-badge" id="badge-<%= b.id %>">×0</span>
+            </div>
+            <div class="biz-sub" id="sub-<%= b.id %>">Locked — buy the previous business first</div>
+            <div class="biz-bar-wrap">
+              <div class="biz-bar" id="bar-<%= b.id %>" style="--biz-color: <%= b.color %>"></div>
+            </div>
+          </div>
+          <div class="biz-actions">
+            <button class="btn btn-buy" id="buy-<%= b.id %>"
+                    onclick="sendAction('buy_business',{bizId:'<%= b.id %>'})"
+                    disabled>
+              <span class="btn-label">Buy</span>
+              <span class="btn-cost" id="cost-<%= b.id %>">—</span>
+            </button>
+            <button class="btn btn-mgr" id="mgr-<%= b.id %>"
+                    onclick="sendAction('buy_manager',{bizId:'<%= b.id %>'})"
+                    disabled style="display:none">
+              <span class="btn-label">Manager</span>
+              <span class="btn-cost" id="mgr-cost-<%= b.id %>">—</span>
+            </button>
+            <button class="btn btn-action" id="act-<%= b.id %>"
+                    onclick="handleActionBtn('<%= b.id %>')"
+                    disabled style="display:none">▶ Start</button>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </section>
+
+    <!-- ── Side panel ─────────────────────────────────────────── -->
+    <aside class="panel panel-side">
+
+      <!-- Upgrades -->
+      <div class="sub-panel" id="upgrades-wrap">
+        <div class="panel-title">Upgrades</div>
+        <div id="upg-list">
+          <p class="empty-hint">Buy businesses to unlock upgrades.</p>
+        </div>
+      </div>
+
+      <!-- Achievements -->
+      <div class="sub-panel">
+        <div class="panel-title">Achievements
+          <span id="ach-count" class="pill">0/<%= achievements.length %></span>
+        </div>
+        <div id="ach-grid">
+          <% achievements.forEach(function(a) { %>
+          <div class="ach-tile locked" id="ach-<%= a.id %>" title="<%= a.name %>: <%= a.desc %>">
+            <span class="ach-icon"><%= a.icon %></span>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+
+      <!-- Stats & Prestige -->
+      <div class="sub-panel">
+        <div class="panel-title">Empire</div>
+        <div class="stat-rows">
+          <div class="stat-row"><span>Income/sec</span><span id="stat-ips">$0</span></div>
+          <div class="stat-row"><span>Prestige level</span><span id="stat-pl">0</span></div>
+          <div class="stat-row"><span>Prestige bonus</span><span id="stat-pm">×1.00</span></div>
+          <div class="stat-row"><span>Upgrades owned</span><span id="stat-upg">0</span></div>
+          <div class="stat-row"><span>Achievements</span><span id="stat-ach">0/<%= achievements.length %></span></div>
+        </div>
+        <div id="prestige-info" class="prestige-progress" style="display:none">
+          <div class="prestige-bar-wrap">
+            <div id="prestige-bar" class="prestige-bar"></div>
+          </div>
+          <span id="prestige-hint" class="prestige-hint"></span>
+        </div>
+        <button id="btn-prestige" class="btn btn-prestige" onclick="doPrestige()" style="display:none">
+          ⭐ Prestige — gain ×<span id="prestige-next-mult">1.50</span>
+        </button>
+        <button id="btn-reset" class="btn btn-reset" onclick="doReset()">⚠ Reset Game</button>
+      </div>
+
+    </aside>
+  </div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- Toast container -->
+<div id="toasts"></div>
+<!-- Float container -->
+<div id="floats"></div>
+<!-- Achievement popup -->
+<div id="ach-popup" class="ach-popup" style="display:none">
+  <div class="ach-popup-icon" id="ach-popup-icon"></div>
+  <div class="ach-popup-text">
+    <div class="ach-popup-title" id="ach-popup-title"></div>
+    <div class="ach-popup-desc"  id="ach-popup-desc"></div>
+  </div>
+</div>
+
+<!-- Embed game constants for the client -->
+<script>
+  window.GAME_CONSTANTS = <%- gameConstants %>;
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/game.js"></script>
+</body>
+</html>
