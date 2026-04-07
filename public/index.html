@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Idle Tycoon</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div class="header-left">
+        <h1>💰 Idle Tycoon</h1>
+      </div>
+      <div class="header-right">
+        <div class="stat-box">
+          <span class="stat-label">Cash</span>
+          <span id="cash-display" class="stat-value">$0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Income/sec</span>
+          <span id="income-display" class="stat-value">$0/s</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Total Earned</span>
+          <span id="total-display" class="stat-value">$0</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <div class="businesses-panel">
+        <h2>Businesses</h2>
+        <div id="businesses-list"></div>
+      </div>
+
+      <div class="side-panel">
+        <div class="upgrades-section">
+          <h2>Upgrades</h2>
+          <div id="upgrades-list">
+            <p class="empty-msg">Buy businesses to unlock upgrades.</p>
+          </div>
+        </div>
+
+        <div class="stats-section">
+          <h2>Stats</h2>
+          <div id="stats-panel">
+            <div class="stat-row"><span>Businesses owned:</span><span id="stat-biz">0</span></div>
+            <div class="stat-row"><span>Managers hired:</span><span id="stat-mgr">0</span></div>
+            <div class="stat-row"><span>Upgrades purchased:</span><span id="stat-upg">0</span></div>
+            <div class="stat-row"><span>Prestige level:</span><span id="stat-prestige">0</span></div>
+            <div class="stat-row"><span>Prestige bonus:</span><span id="stat-prestige-bonus">x1.0</span></div>
+          </div>
+          <button id="prestige-btn" class="btn-prestige" style="display:none">
+            ⭐ Prestige (x<span id="prestige-mult">1.5</span> boost)
+          </button>
+          <button id="reset-btn" class="btn-reset">Reset Game</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>
